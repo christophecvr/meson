@@ -1186,13 +1186,19 @@ class CLikeCompiler(Compiler):
         You can also add to this by setting -F in CFLAGS.
         '''
         # TODO: this really needs to be *AppleClang*, not just any clang.
-        if self.id != 'clang':
-            raise mesonlib.MesonException('Cannot find framework path with non-clang compiler')
+        # https://github.com/mesonbuild/meson/pull/9211 commented lines below.
+        #if self.id != 'clang':
+        #    raise mesonlib.MesonException('Cannot find framework path with non-clang compiler')
         # Construct the compiler command-line
         commands = self.get_exelist(ccache=False) + ['-v', '-E', '-']
         commands += self.get_always_args()
-        # Add CFLAGS/CXXFLAGS/OBJCFLAGS/OBJCXXFLAGS from the env
-        commands += env.coredata.get_external_args(self.for_machine, self.language)
+        mlog.debug('CVR XDEGUG CHECK COMMAND', ' '.join(commands), '\n')
+        # This command only search for clang used Systems Library Framework Path
+        # If found just added to the path
+        # some flags are not needed and unsuported by clang.
+        # Add external CFLAGS,CXXFLAGS,COBJFLAGS,COBJXXFLAGS
+        # Without unneeded and or unsupported flags for this command.
+        commands += [x for x in env.coredata.get_external_args(self.for_machine, self.language) if '-std=' not in x]
         mlog.debug('Finding framework path by running: ', ' '.join(commands), '\n')
         os_env = os.environ.copy()
         os_env['LC_ALL'] = 'C'
