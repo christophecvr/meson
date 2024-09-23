@@ -213,7 +213,7 @@ class RunProcess(MesonInterpreterObject):
                  subdir: str,
                  mesonintrospect: T.List[str],
                  in_builddir: bool = False,
-                 check: bool = False,
+                 check: bool = True,
                  capture: bool = True) -> None:
         super().__init__()
         if not isinstance(cmd, ExternalProgram):
@@ -234,7 +234,7 @@ class RunProcess(MesonInterpreterObject):
                     subdir: str,
                     mesonintrospect: T.List[str],
                     in_builddir: bool,
-                    check: bool = False) -> T.Tuple[int, str, str]:
+                    check: bool = True) -> T.Tuple[int, str, str]:
         command_array = cmd.get_command() + args
         menv = {'MESON_SOURCE_ROOT': source_dir,
                 'MESON_BUILD_ROOT': build_dir,
